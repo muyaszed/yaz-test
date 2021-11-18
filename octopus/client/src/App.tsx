@@ -17,12 +17,14 @@ const App = () => {
     }
   );
   const [qty, setQty] = useState(1);
+  const [basketQty, setBasketQty] = useState(0);
+  const [allQtyAdded, setAllQtyAded] = useState(false);
+
+  if (!data) {
+    return null;
+  }
 
   const renderProductPrice = () => {
-    if (!data) {
-      return null;
-    }
-
     const { price } = data.product;
     const priceStr = price.toString();
     const wholePart = priceStr.slice(0, priceStr.length - 2);
@@ -33,6 +35,66 @@ const App = () => {
         <span className="product-price-whole">{wholePart}</span>
         <span className="product-price-fractional">.{fractionalPart}</span>
       </>
+    );
+  };
+
+  const handleQtyIncrease = () => {
+    let currentQty = qty;
+    if (currentQty >= data.product.quantity) {
+      return;
+    }
+    currentQty += 1;
+    setQty(currentQty);
+  };
+
+  const handleQtyDecrease = () => {
+    let currentQty = qty;
+    if (currentQty <= 1) {
+      return;
+    }
+
+    currentQty -= 1;
+    setQty(currentQty);
+  };
+
+  const handleAddToCart = () => {
+    if (qty >= data.product.quantity) {
+      setAllQtyAded(true);
+    }
+    setBasketQty(qty);
+  };
+
+  const renderQty = () => {
+    if (basketQty >= data.product.quantity) {
+      return "0";
+    }
+
+    return qty;
+  };
+
+  const renderQtyGroup = () => {
+    return (
+      <div
+        className={
+          allQtyAdded
+            ? "product-selector-wrapper-zero"
+            : "product-selector-wrapper"
+        }
+      >
+        {!allQtyAdded && (
+          <div className="product-qty-decrease" onClick={handleQtyDecrease}>
+            -
+          </div>
+        )}
+        <div className="product-qty" aria-label="Quantity">
+          {renderQty()}
+        </div>
+        {!allQtyAdded && (
+          <div className="product-qty-increase" onClick={handleQtyIncrease}>
+            +
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -56,16 +118,20 @@ const App = () => {
           <div className="product-price">{renderProductPrice()}</div>
           <div className="product-qty-wrapper">
             <div className="product-qty-label">QTY</div>
-            <div className="product-selector-wrapper">
-              <div className="product-qty-decrease">-</div>
-              <div className="product-qty" aria-label="qtyValue">
-                {qty}
-              </div>
-              <div className="product-qty-increase">+</div>
-            </div>
+            {renderQtyGroup()}
           </div>
           <div className="product-add-to-cart-btn-wrapper">
-            <div className="product-add-to-cart-btn">Add to cart</div>
+            <button
+              className={
+                allQtyAdded
+                  ? "product-add-to-cart-btn-disabled"
+                  : "product-add-to-cart-btn"
+              }
+              onClick={handleAddToCart}
+              disabled={allQtyAdded}
+            >
+              Add to cart
+            </button>
           </div>
         </div>
         <div className="product-desc-section">
@@ -103,6 +169,18 @@ const App = () => {
     );
   };
 
+  const renderBasketPill = () => {
+    if (basketQty === 0) {
+      return null;
+    }
+
+    return (
+      <div className="basket-qty-pill" aria-label="Basket">
+        {basketQty}
+      </div>
+    );
+  };
+
   return (
     <div className="main-container">
       <div className="main-header">
@@ -110,6 +188,7 @@ const App = () => {
           <img className="main-logo" src={Logo} />
         </div>
         <div className="main-basket-wrapper">
+          {renderBasketPill()}
           <img className="main-basket" src={Basket} />
         </div>
       </div>

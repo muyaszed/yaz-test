@@ -25,6 +25,21 @@
     }
 
     .main-basket-wrapper {
+      position: relative;
+      .basket-qty-pill {
+        position: absolute;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.8rem;
+      }
+
       .main-basket {
         width: 25px;
         padding: 10px;
@@ -143,6 +158,11 @@
               width: 30%;
             }
           }
+
+          .product-selector-wrapper-zero {
+            display: flex;
+            justify-content: center;
+          }
         }
 
         .product-add-to-cart-btn-wrapper {
@@ -152,7 +172,22 @@
           align-items: center;
           padding: 10px 0;
 
+          .product-add-to-cart-btn-disabled {
+            border: none;
+            display: flex;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            width: 200px;
+            background-color: #d8c7cf;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            cursor: not-allowed;
+          }
           .product-add-to-cart-btn {
+            border: none;
             display: flex;
             position: relative;
             justify-content: center;

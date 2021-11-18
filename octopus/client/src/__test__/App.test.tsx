@@ -36,7 +36,11 @@ const mocks = [
   },
 ];
 
-test.only("should be able to increase and decrease product quantity", async () => {
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+test("should be able to increase and decrease product quantity", async () => {
   await act(async () => {
     render(
       <MockedProvider mocks={mocks} addTypename={false}>
@@ -48,7 +52,7 @@ test.only("should be able to increase and decrease product quantity", async () =
 
   const minusSign = await screen.findByText("-");
   const plusSign = await screen.findByText("+");
-  const qtyValue = await screen.findByLabelText("qtyValue");
+  const qtyValue = await screen.findByLabelText("Quantity");
 
   expect(qtyValue.textContent).toBe("1");
 
@@ -59,6 +63,85 @@ test.only("should be able to increase and decrease product quantity", async () =
   expect(qtyValue.textContent).toBe("1");
 });
 
+test("should not allow user to increase more that total quantity available", async () => {
+  await act(async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <App />
+      </MockedProvider>
+    );
+    await wait();
+  });
+
+  const plusSign = await screen.findByText("+");
+  const qtyValue = await screen.findByLabelText("Quantity");
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  expect(qtyValue.textContent).toBe("4");
+});
+
+test("should not allow user to decrease more that the minimum value of 1", async () => {
+  await act(async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <App />
+      </MockedProvider>
+    );
+    await wait();
+  });
+
+  const minusSign = await screen.findByText("-");
+  const qtyValue = await screen.findByLabelText("Quantity");
+  fireEvent.click(minusSign);
+  fireEvent.click(minusSign);
+  fireEvent.click(minusSign);
+  fireEvent.click(minusSign);
+  expect(qtyValue.textContent).toBe("1");
+});
+
 test("should be able to add items to the basket", async () => {
-  expect(true).toBe(false);
+  await act(async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <App />
+      </MockedProvider>
+    );
+    await wait();
+  });
+
+  const addBtn = await screen.findByText("Add to cart");
+  fireEvent.click(addBtn);
+
+  await wait(() => screen.getByLabelText("Basket"));
+
+  expect(screen.getByLabelText("Basket").textContent).toBe("1");
+});
+
+test("should disable add to cart button and set quantity to 0 when all item is added to cart", async () => {
+  await act(async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <App />
+      </MockedProvider>
+    );
+    await wait();
+  });
+
+  const plusSign = await screen.findByText("+");
+  const addBtn = await screen.findByText("Add to cart");
+  const qtyValue = await screen.findByLabelText("Quantity");
+
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  fireEvent.click(plusSign);
+  fireEvent.click(addBtn);
+
+  await wait(() => screen.getByLabelText("Basket"));
+
+  expect(screen.getByLabelText("Basket").textContent).toBe("4");
+  expect(qtyValue.textContent).toBe("0");
+  expect(addBtn.closest("button")).toBeDisabled();
 });
