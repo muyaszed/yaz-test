@@ -6,6 +6,8 @@ import GET_PRODUCT_BY_ID, {
 } from "./graphql/queries/product";
 import Logo from "./assets/logo.svg";
 import Basket from "./assets/basket.svg";
+import Button from "./components/Button";
+import QuantitySelector from "./components/QuantitySelector";
 
 const App = () => {
   const { data, loading, error } = useQuery<ProductData, ProductVar>(
@@ -66,36 +68,10 @@ const App = () => {
 
   const renderQty = () => {
     if (basketQty >= data.product.quantity) {
-      return "0";
+      return 0;
     }
 
     return qty;
-  };
-
-  const renderQtyGroup = () => {
-    return (
-      <div
-        className={
-          allQtyAdded
-            ? "product-selector-wrapper-zero"
-            : "product-selector-wrapper"
-        }
-      >
-        {!allQtyAdded && (
-          <div className="product-qty-decrease" onClick={handleQtyDecrease}>
-            -
-          </div>
-        )}
-        <div className="product-qty" aria-label="Quantity">
-          {renderQty()}
-        </div>
-        {!allQtyAdded && (
-          <div className="product-qty-increase" onClick={handleQtyIncrease}>
-            +
-          </div>
-        )}
-      </div>
-    );
   };
 
   const renderMainContent = () => {
@@ -118,20 +94,19 @@ const App = () => {
           <div className="product-price">{renderProductPrice()}</div>
           <div className="product-qty-wrapper">
             <div className="product-qty-label">QTY</div>
-            {renderQtyGroup()}
+            <QuantitySelector
+              qtyValue={renderQty()}
+              hideSelector={allQtyAdded}
+              handleQtyIncrease={handleQtyIncrease}
+              handleQtyDecrease={handleQtyDecrease}
+            />
           </div>
           <div className="product-add-to-cart-btn-wrapper">
-            <button
-              className={
-                allQtyAdded
-                  ? "product-add-to-cart-btn-disabled"
-                  : "product-add-to-cart-btn"
-              }
-              onClick={handleAddToCart}
+            <Button
+              text="Add to cart"
+              handleOnClick={handleAddToCart}
               disabled={allQtyAdded}
-            >
-              Add to cart
-            </button>
+            />
           </div>
         </div>
         <div className="product-desc-section">
