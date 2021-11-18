@@ -88,7 +88,7 @@ const App = () => {
         </div>
         <div className="product-title-section">
           <div className="product-title">{data.product.name}</div>
-          <div className="product-sub-title">{`${data.product.power} // Packet of ${data.product.quantity}`}</div>
+          <div className="product-sub-title">{`${data.product.power} // Packet of 4`}</div>
         </div>
         <div className="product-price-and-qty-section">
           <div className="product-price">{renderProductPrice()}</div>
